@@ -1,0 +1,14 @@
+{
+  "name": "calameo-pdf-web",
+  "version": "1.0.0",
+  "description": "Convert and download Calameo flipbooks and magazines to high quality or compressed PDF online.",
+  "type": "module",
+  "main": "api/book.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node server.js"
+  },
+  "keywords": ["calameo", "pdf", "downloader", "converter", "compressor"],
+  "author": "Antigravity",
+  "license": "MIT"
+}
