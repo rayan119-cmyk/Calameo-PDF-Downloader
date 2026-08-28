@@ -1,66 +1,62 @@
 # 📰 Calaméo to PDF Web Downloader & Compressor
 
-> Convertissez et téléchargez n'importe quel magazine ou journal Calaméo en fichier PDF haute définition ou compressé, directement en ligne sans extension.
+> Convert and download any Calaméo magazine, newspaper, or publication to High-Definition or compressed PDF online for free without installing any browser extensions.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/calameo-pdf-web)
-
----
-
-## ✨ Fonctionnalités
-
-- 🌐 **100% En Ligne & Sans Installation** : Fonctionne sur PC, Mac, iPhone, iPad et Android.
-- ⚡ **Téléchargement Parallèle Multi-Thread** : Récupère toutes les pages simultanément en quelques secondes.
-- 📰 **Mode Journal & Presse** : Algorithme intelligent de blanchiment du fond (`#FFFFFF`) et renforcement de l'encre du texte.
-- 🗜️ **3 Modes de Compression** :
-  1. `⭐ Standard HD` : Résolution brute d'origine.
-  2. `📰 Mode Journal` : Optimisé pour lecture écran (~7-8 Mo).
-  3. `⚡ Compression Ultime` : Ultra-léger pour partage WhatsApp / Email (~4 Mo).
-- 🔒 **100% Privé** : L'assemblage du document PDF s'effectue en local dans le navigateur du visiteur.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/rayan119-cmyk/Calameo-PDF-Downloader)
 
 ---
 
-## 🚀 Déploiement en 1 Clic sur Vercel (Gratuit à vie)
+## ✨ Features
 
-### Option A : Depuis GitHub (Recommandé)
-1. Créez un nouveau dépôt sur votre compte GitHub (ex: `calameo-pdf-web`).
-2. Poussez le contenu de ce dossier sur GitHub :
+- 🌐 **100% Online & No Install** : Works seamlessly on PC, Mac, iPhone, iPad, and Android.
+- ⚡ **Multi-Threaded Parallel Download** : Retrieves all pages concurrently in seconds.
+- 📰 **Newspaper & Document Mode** : Intelligent algorithm for pure white background clamping (`#FFFFFF`) and ink boost.
+- 🗜️ **3 Smart Compression Modes** :
+  1. `⭐ Standard HD` : Uncompressed raw original resolution.
+  2. `📰 Newspaper Mode` : Optimized for reading & press (~7-8 MB / 20p).
+  3. `⚡ Ultimate Compression` : Ultra-lightweight for fast WhatsApp / Email sharing (~4 MB / 20p).
+- 🔒 **100% Private & Client-Side** : PDF compilation happens locally inside the user's browser.
+
+---
+
+## 🚀 1-Click Deployment to Vercel (Free Forever)
+
+### Option A: Via GitHub (Recommended)
+1. Fork or push this repository to your GitHub account:
    ```bash
-   git init
    git add .
-   git commit -m "Initial commit - Calameo to PDF Web"
-   git branch -M main
-   git remote add origin https://github.com/VOTRE_PSEUDO/calameo-pdf-web.git
-   git push -u origin main
+   git commit -m "Translate to English & update Vercel config"
+   git push origin main
    ```
-3. Rendez-vous sur [vercel.com](https://vercel.com), cliquez sur **"Add New Project"**, importez votre dépôt GitHub et cliquez sur **Deploy**.
-4. Votre site sera instantanément en ligne avec une URL gratuite du type `https://votre-projet.vercel.app` !
+2. Go to [vercel.com](https://vercel.com), click **"Add New Project"**, import your GitHub repository, and click **Deploy**.
+3. Your web app will be instantly live with a free URL like `https://your-project.vercel.app`!
 
 ---
 
-## 💻 Test en local sur votre ordinateur
+## 💻 Local Development
 
-Pour tester l'application directement sur votre machine sans rien installer :
+To run and test the application on your computer:
 
 ```bash
-# 1. Naviguer dans le dossier
+# 1. Navigate to directory
 cd calameo-pdf-web
 
-# 2. Lancer le serveur local
+# 2. Start local server
 node server.js
 ```
 
-Ouvrez ensuite votre navigateur sur : **`http://localhost:3000`**
+Open your browser at: **`http://localhost:3000`**
 
 ---
 
-## 🛠️ Stack Technique
+## 🛠️ Tech Stack
 
-- **Frontend** : HTML5, Vanilla Modern CSS (Dark Mode & Glassmorphism), JavaScript ES6+
-- **Moteur PDF** : [jsPDF](https://github.com/parallax/jsPDF)
-- **Backend Serverless** : Vercel Functions (Node.js) pour l'API de métadonnées et le décompresseur SVGZ/CORS
-- **Décompression** : Node.js `zlib` natif
+- **Frontend** : HTML5, Modern Vanilla CSS (Dark Mode & Glassmorphism), JavaScript ES6+
+- **PDF Engine** : [jsPDF](https://github.com/parallax/jsPDF)
+- **Backend Serverless** : Vercel Functions (Node.js) for Calaméo book API metadata and SVGZ/CORS proxy
+- **Decompression** : Native Node.js `zlib`
 
 ---
 
-## 📄 Licence
-Distribué sous licence MIT. Libre d'utilisation et de modification.
+## 📄 License
+Distributed under the MIT License. Free for personal and commercial use.

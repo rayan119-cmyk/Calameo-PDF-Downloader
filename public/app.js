@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || `Erreur serveur HTTP ${res.status}`);
+        throw new Error(data.error || `Server error HTTP ${res.status}`);
       }
 
       currentBookData = data;
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } catch (err) {
       console.error('Inspect failed:', err);
-      showError(err.message || 'Impossible d\'analyser la publication. Vérifiez l\'URL.');
+      showError(err.message || 'Unable to inspect publication. Please check the URL.');
     } finally {
       setInspectLoading(false);
     }
@@ -101,15 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
     inspectBtn.disabled = loading;
     if (loading) {
       inspectSpinner.style.display = 'inline-block';
-      inspectBtn.querySelector('span').textContent = 'Analyse...';
+      inspectBtn.querySelector('span').textContent = 'Analyzing...';
     } else {
       inspectSpinner.style.display = 'none';
-      inspectBtn.querySelector('span').textContent = 'Inspecter';
+      inspectBtn.querySelector('span').textContent = 'Inspect';
     }
   }
 
   function displayBookPreview(data) {
-    bookTitle.textContent = data.title || 'Publication Calaméo';
+    bookTitle.textContent = data.title || 'Calaméo Publication';
     bookCode.textContent = data.bkcode || '-';
     pageCountBadge.textContent = `${data.totalPages} pages`;
     bookLink.href = data.viewUrl || `https://www.calameo.com/read/${data.bkcode}`;
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await generatePdfPipeline(currentBookData, { mode, layout, orientation });
     } catch (err) {
       console.error('PDF creation error:', err);
-      alert(`Erreur lors de la création du PDF : ${err.message}`);
+      alert(`Error generating PDF: ${err.message}`);
     } finally {
       isProcessing = false;
       generatePdfBtn.disabled = false;
@@ -278,13 +278,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const lum = 0.299 * r + 0.587 * g + 0.114 * b;
         const sat = Math.max(r, g, b) - Math.min(r, g, b);
 
-        // 1. White Clamping (fond blanc pur = 0 Ko de compression)
+        // 1. White Clamping (pure white background = 0 KB compression)
         if (lum > whiteThreshold && sat < 28) {
           data[i] = 255;
           data[i + 1] = 255;
           data[i + 2] = 255;
         }
-        // 2. Ink Boost (texte noir d'imprimerie franc et net)
+        // 2. Ink Boost (deep crisp print-like black text)
         else if (lum < 145 && sat < 30) {
           const inkFactor = mode === 'ultimate' ? 0.75 : 0.85;
           data[i] = Math.max(0, Math.floor(r * inkFactor));
@@ -306,11 +306,11 @@ document.addEventListener('DOMContentLoaded', () => {
   async function generatePdfPipeline(bookData, options) {
     const { mode, layout, orientation } = options;
     const totalPages = bookData.pages.length;
-    const CONCURRENCY = 5; // Lots de 5 pages en parallèle
+    const CONCURRENCY = 5; // Batches of 5 pages in parallel
 
-    updateProgress(0, `Démarrage du téléchargement de ${totalPages} pages...`, '0%');
+    updateProgress(0, `Starting download of ${totalPages} pages in parallel...`, '0%');
 
-    // Pool de téléchargement parallèle
+    // Parallel download pool
     const pagesResults = new Array(totalPages);
     let completedCount = 0;
 
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         updateProgress(
           (completedCount / totalPages) * 85,
-          `Téléchargement & traitement page ${index + 1}/${totalPages}...`,
+          `Downloading & processing page ${index + 1}/${totalPages}...`,
           `${Math.round((completedCount / totalPages) * 85)}%`
         );
 
@@ -336,18 +336,18 @@ document.addEventListener('DOMContentLoaded', () => {
       } finally {
         completedCount++;
         const pct = Math.round((completedCount / totalPages) * 85);
-        updateProgress(pct, `Traitement : ${completedCount}/${totalPages} pages prêtes`, `${pct}%`);
+        updateProgress(pct, `Processing: ${completedCount}/${totalPages} pages ready`, `${pct}%`);
       }
     }
 
-    // Exécuter par lots de CONCURRENCY
+    // Process concurrently in batches
     for (let i = 0; i < totalPages; i += CONCURRENCY) {
       const batch = bookData.pages.slice(i, i + CONCURRENCY).map((p, bIdx) => processPageTask(p, i + bIdx));
       await Promise.all(batch);
     }
 
-    // Assemblage dans jsPDF
-    updateProgress(90, 'Assemblage du document PDF final...', '90%');
+    // Assembling in jsPDF
+    updateProgress(90, 'Assembling final PDF document...', '90%');
 
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({
@@ -398,21 +398,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (addedPages === 0) {
-      throw new Error('Aucune page n\'a pu être récupérée pour construire le PDF.');
+      throw new Error('No pages could be retrieved to assemble the PDF.');
     }
 
-    updateProgress(100, 'Téléchargement de votre PDF...', '100%');
+    updateProgress(100, 'Downloading your PDF file...', '100%');
 
     const cleanTitle = (bookData.title || 'calameo_document')
-      .replace(/[^a-zA-Z0-9à-ÿÀ-Ý_\-\s]/g, '')
+      .replace(/[^a-zA-Z0-9_\-\s]/g, '')
       .trim()
       .replace(/\s+/g, '_');
 
     pdf.save(`${cleanTitle}_${mode}.pdf`);
 
     setTimeout(() => {
-      progressStatusText.textContent = '✅ PDF généré et téléchargé avec succès !';
-      progressDetails.textContent = `Fichier sauvegardé : ${cleanTitle}_${mode}.pdf (${addedPages} pages)`;
+      progressStatusText.textContent = '✅ PDF generated and downloaded successfully!';
+      progressDetails.textContent = `File saved: ${cleanTitle}_${mode}.pdf (${addedPages} pages)`;
     }, 400);
   }
 
@@ -420,6 +420,6 @@ document.addEventListener('DOMContentLoaded', () => {
     progressBar.style.width = `${percent}%`;
     progressStatusText.textContent = statusText;
     progressPercent.textContent = percentText;
-    progressDetails.textContent = `Progression globale : ${Math.round(percent)}%`;
+    progressDetails.textContent = `Overall progress: ${Math.round(percent)}%`;
   }
 });

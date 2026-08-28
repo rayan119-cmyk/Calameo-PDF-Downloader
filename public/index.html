@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calaméo PDF Downloader & Compressor</title>
-  <meta name="description" content="Convertissez et téléchargez n'importe quel magazine ou journal Calaméo en PDF HD ou compressé directement en ligne.">
+  <meta name="description" content="Convert and download any Calaméo magazine, newspaper, or flipbook to HD or compressed PDF online for free.">
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,15 +22,15 @@
         <span class="logo-icon">📰</span>
         <span class="logo-text">Calaméo to PDF</span>
       </div>
-      <h1>Téléchargez vos magazines Calaméo en PDF</h1>
-      <p class="subtitle">Collez simplement l'URL de votre publication. Choisissez votre mode de compression et téléchargez votre PDF en quelques secondes.</p>
+      <h1>Download Calaméo Magazines as PDF</h1>
+      <p class="subtitle">Simply paste your publication URL. Choose your preferred compression quality and download your PDF in seconds.</p>
     </header>
 
     <!-- Main Card -->
     <main class="glass-card main-box">
       <!-- Input Section -->
       <form id="urlForm" class="url-form">
-        <label for="urlInput" class="input-label">Lien de la publication Calaméo</label>
+        <label for="urlInput" class="input-label">Calaméo Publication URL</label>
         <div class="input-group">
           <input 
             type="url" 
@@ -39,11 +39,11 @@
             required
             autocomplete="off"
           >
-          <button type="button" id="pasteBtn" class="btn-secondary" title="Coller depuis le presse-papier">
-            📋 Coller
+          <button type="button" id="pasteBtn" class="btn-secondary" title="Paste from clipboard">
+            📋 Paste
           </button>
           <button type="submit" id="inspectBtn" class="btn-primary">
-            <span>Inspecter</span>
+            <span>Inspect</span>
             <span class="spinner" id="inspectSpinner" style="display:none;"></span>
           </button>
         </div>
@@ -54,32 +54,32 @@
       <section id="previewSection" class="preview-section" style="display:none;">
         <div class="book-preview-card">
           <div class="cover-wrapper">
-            <img id="bookCover" src="" alt="Couverture" loading="lazy">
+            <img id="bookCover" src="" alt="Cover thumbnail" loading="lazy">
             <span id="pageCountBadge" class="badge-pages">0 pages</span>
           </div>
           <div class="book-info">
-            <h3 id="bookTitle">Titre du document</h3>
+            <h3 id="bookTitle">Publication Title</h3>
             <p class="book-meta">
-              <span>📖 Identifiant : <strong id="bookCode">000...</strong></span>
+              <span>📖 Book ID: <strong id="bookCode">000...</strong></span>
             </p>
-            <a id="bookLink" href="#" target="_blank" class="external-link">Ouvrir sur Calaméo ↗</a>
+            <a id="bookLink" href="#" target="_blank" class="external-link">Open on Calaméo ↗</a>
           </div>
         </div>
 
         <!-- Compression Modes -->
         <div class="options-group">
-          <label class="group-label">Mode d'exportation & Compression</label>
+          <label class="group-label">Export Mode & Smart Compression</label>
           <div class="compression-grid">
             <label class="mode-card active">
               <input type="radio" name="compressionMode" value="journal" checked>
               <div class="mode-content">
                 <div class="mode-header">
                   <span class="mode-icon">📰</span>
-                  <span class="mode-title">Mode Journal / Équilibré</span>
-                  <span class="mode-tag recommend">Recommandé</span>
+                  <span class="mode-title">Newspaper / Balanced Mode</span>
+                  <span class="mode-tag recommend">Recommended</span>
                 </div>
-                <p class="mode-desc">Nettoie le fond en blanc pur (#FFFFFF) et accentue la netteté de l'encre. Idéal pour la presse.</p>
-                <div class="mode-size">Taille estimée : ~7-8 Mo / 20p</div>
+                <p class="mode-desc">Clamps background to pure white (#FFFFFF) and boosts ink contrast. Ideal for press & text.</p>
+                <div class="mode-size">Estimated size: ~7-8 MB / 20p</div>
               </div>
             </label>
 
@@ -88,11 +88,11 @@
               <div class="mode-content">
                 <div class="mode-header">
                   <span class="mode-icon">⚡</span>
-                  <span class="mode-title">Compression Ultime</span>
-                  <span class="mode-tag light">Ultra-Léger</span>
+                  <span class="mode-title">Ultimate Compression</span>
+                  <span class="mode-tag light">Ultra-Light</span>
                 </div>
-                <p class="mode-desc">Compression maximale pour partage rapide WhatsApp, Email et stockage réduit.</p>
-                <div class="mode-size">Taille estimée : ~4-5 Mo / 20p</div>
+                <p class="mode-desc">Maximum compression for quick WhatsApp, Email sharing, and minimal storage.</p>
+                <div class="mode-size">Estimated size: ~4-5 MB / 20p</div>
               </div>
             </label>
 
@@ -103,8 +103,8 @@
                   <span class="mode-icon">⭐</span>
                   <span class="mode-title">Standard HD Original</span>
                 </div>
-                <p class="mode-desc">Résolution brute sans modification. Qualité d'image maximale.</p>
-                <div class="mode-size">Taille estimée : ~14-16 Mo / 20p</div>
+                <p class="mode-desc">Raw uncompressed resolution. Maximum image fidelity.</p>
+                <div class="mode-size">Estimated size: ~14-16 MB / 20p</div>
               </div>
             </label>
           </div>
@@ -113,17 +113,17 @@
         <!-- Advanced Layout Settings -->
         <div class="advanced-settings">
           <div class="setting-item">
-            <label for="pdfLayout">Disposition des pages</label>
+            <label for="pdfLayout">Page Layout</label>
             <select id="pdfLayout">
-              <option value="fill" selected>Remplir la page (Fill - Pas de bandes blanches)</option>
-              <option value="fit">Ajuster (Fit - Conserver les proportions exactes)</option>
+              <option value="fill" selected>Fill page (Fill - No white borders)</option>
+              <option value="fit">Fit page (Fit - Preserve exact aspect ratio)</option>
             </select>
           </div>
           <div class="setting-item">
             <label for="pdfOrientation">Orientation</label>
             <select id="pdfOrientation">
               <option value="portrait" selected>Portrait (Standard)</option>
-              <option value="landscape">Paysage</option>
+              <option value="landscape">Landscape</option>
             </select>
           </div>
         </div>
@@ -131,7 +131,7 @@
         <!-- Download Action -->
         <div class="action-row">
           <button type="button" id="generatePdfBtn" class="btn-generate">
-            <span>🚀 Générer & Télécharger le PDF</span>
+            <span>🚀 Generate & Download PDF</span>
           </button>
         </div>
       </section>
@@ -139,13 +139,13 @@
       <!-- Progress Section (During PDF creation) -->
       <section id="progressSection" class="progress-section" style="display:none;">
         <div class="progress-header">
-          <span id="progressStatusText" class="status-text">Téléchargement des pages en parallèle...</span>
+          <span id="progressStatusText" class="status-text">Downloading pages in parallel...</span>
           <span id="progressPercent" class="percent-text">0%</span>
         </div>
         <div class="progress-track">
           <div id="progressBar" class="progress-fill" style="width: 0%;"></div>
         </div>
-        <p id="progressDetails" class="progress-details">Préparation du moteur de rendu...</p>
+        <p id="progressDetails" class="progress-details">Preparing rendering engine...</p>
       </section>
     </main>
 
@@ -154,21 +154,21 @@
       <div class="features-row">
         <div class="feature-item">
           <span>⚡</span>
-          <strong>Téléchargement Multi-Thread</strong>
-          <p>Toutes les pages sont récupérées en parallèle.</p>
+          <strong>Multi-Threaded Download</strong>
+          <p>All pages are retrieved concurrently in seconds.</p>
         </div>
         <div class="feature-item">
           <span>🔒</span>
-          <strong>100% Privé & Local</strong>
-          <p>Le PDF est assemblé directement dans votre navigateur.</p>
+          <strong>100% Private & Client-Side</strong>
+          <p>The PDF is assembled directly inside your browser.</p>
         </div>
         <div class="feature-item">
           <span>📱</span>
-          <strong>Multi-Plateforme</strong>
-          <p>Fonctionne sur PC, Mac, iPhone et Android.</p>
+          <strong>Cross-Platform</strong>
+          <p>Works seamlessly on PC, Mac, iPhone, and Android.</p>
         </div>
       </div>
-      <p class="copyright">Projet Open-Source hébergé sur GitHub & Vercel.</p>
+      <p class="copyright">Open-Source project hosted on GitHub & Vercel.</p>
     </footer>
   </div>
 
