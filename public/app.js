@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bookCover.src = data.coverUrl;
     }
 
-    previewSection.style.display = 'block';
+    previewSection.style.display = 'flex';
     previewSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
