@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   generatePdfBtn.addEventListener('click', async () => {
     if (!currentBookData || !currentBookData.pages || isProcessing) return;
 
-    const mode = document.querySelector('input[name="compressionMode"]:checked')?.value || 'journal';
+    const mode = document.querySelector('input[name="compressionMode"]:checked')?.value || 'standard';
     const layout = pdfLayoutSelect.value || 'fill';
     const orientation = pdfOrientationSelect.value || 'portrait';
 
