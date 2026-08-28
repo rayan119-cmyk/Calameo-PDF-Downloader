@@ -1,8 +1,11 @@
 # 📰 Calaméo to PDF Web Downloader & Compressor
 
-> Convert and download any Calaméo magazine, newspaper, or publication to High-Definition or compressed PDF online for free without installing any browser extensions.
+[![Live Website](https://img.shields.io/badge/🌐%20Live%20Website-Visit%20App-6366f1?style=for-the-badge&logo=vercel)](https://calameo-pdf-downloader-rust.vercel.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-emerald?style=for-the-badge)](LICENSE)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/rayan119-cmyk/Calameo-PDF-Downloader)
+> Convert and download any Calaméo magazine, newspaper, or flipbook to High-Definition or compressed PDF online directly in your browser — **no extensions or installation required**.
+
+### 🔗 **Try it live now : [https://calameo-pdf-downloader-rust.vercel.app/](https://calameo-pdf-downloader-rust.vercel.app/)**
 
 ---
 
@@ -12,24 +15,18 @@
 - ⚡ **Multi-Threaded Parallel Download** : Retrieves all pages concurrently in seconds.
 - 📰 **Newspaper & Document Mode** : Intelligent algorithm for pure white background clamping (`#FFFFFF`) and ink boost.
 - 🗜️ **3 Smart Compression Modes** :
-  1. `⭐ Standard HD` : Uncompressed raw original resolution.
+  1. `⭐ Standard HD` : Uncompressed raw original resolution (~14 MB / 20p).
   2. `📰 Newspaper Mode` : Optimized for reading & press (~7-8 MB / 20p).
   3. `⚡ Ultimate Compression` : Ultra-lightweight for fast WhatsApp / Email sharing (~4 MB / 20p).
 - 🔒 **100% Private & Client-Side** : PDF compilation happens locally inside the user's browser.
 
 ---
 
-## 🚀 1-Click Deployment to Vercel (Free Forever)
+## 🚀 How It Works
 
-### Option A: Via GitHub (Recommended)
-1. Fork or push this repository to your GitHub account:
-   ```bash
-   git add .
-   git commit -m "Translate to English & update Vercel config"
-   git push origin main
-   ```
-2. Go to [vercel.com](https://vercel.com), click **"Add New Project"**, import your GitHub repository, and click **Deploy**.
-3. Your web app will be instantly live with a free URL like `https://your-project.vercel.app`!
+1. Copy any Calaméo publication link (e.g. `https://www.calameo.com/read/007907577e17cb97dca09`).
+2. Paste it on **[calameo-pdf-downloader-rust.vercel.app](https://calameo-pdf-downloader-rust.vercel.app/)**.
+3. Choose your export quality and click **Generate & Download PDF**.
 
 ---
 
@@ -38,8 +35,9 @@
 To run and test the application on your computer:
 
 ```bash
-# 1. Navigate to directory
-cd calameo-pdf-web
+# 1. Clone this repository
+git clone https://github.com/rayan119-cmyk/Calameo-PDF-Downloader.git
+cd Calameo-PDF-Downloader
 
 # 2. Start local server
 node server.js
