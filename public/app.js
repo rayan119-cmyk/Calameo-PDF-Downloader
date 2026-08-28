@@ -57,17 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Inspect Calaméo URL handler
-  async function handleInspect(e) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+  // 3. Inspect Calaméo URL form submit
+  urlForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
     const url = urlInput.value.trim();
-    if (!url) {
-      showError('Please paste or type a valid Calaméo publication URL.');
-      return;
-    }
+    if (!url) return;
 
     showError('');
     setInspectLoading(true);
@@ -90,15 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
       showError(err.message || 'Unable to inspect publication. Please check the URL.');
     } finally {
       setInspectLoading(false);
-    }
-  }
-
-  inspectBtn.addEventListener('click', handleInspect);
-  urlForm.addEventListener('submit', handleInspect);
-  urlInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleInspect();
     }
   });
 
@@ -133,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bookCover.src = data.coverUrl;
     }
 
-    previewSection.style.display = 'flex';
+    previewSection.style.display = 'block';
     previewSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
@@ -141,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   generatePdfBtn.addEventListener('click', async () => {
     if (!currentBookData || !currentBookData.pages || isProcessing) return;
 
-    const mode = document.querySelector('input[name="compressionMode"]:checked')?.value || 'standard';
+    const mode = document.querySelector('input[name="compressionMode"]:checked')?.value || 'journal';
     const layout = pdfLayoutSelect.value || 'fill';
     const orientation = pdfOrientationSelect.value || 'portrait';
 
@@ -346,19 +331,14 @@ document.addEventListener('DOMContentLoaded', () => {
           const result = await processPageImage(fallbackProxy, mode);
           pagesResults[index] = result;
         } catch (e2) {
-          try {
-            const thumbProxy = `/api/proxy?url=${encodeURIComponent(pageObj.fallbackThumbUrl)}`;
-            const result = await processPageImage(thumbProxy, mode);
-            pagesResults[index] = result;
-          } catch (e3) {
-            console.error(`Page ${index + 1} all fallbacks failed:`, e3);
-          }
+          console.error(`Page ${index + 1} failed:`, e2);
         }
       } finally {
         completedCount++;
         const pct = Math.round((completedCount / totalPages) * 85);
         updateProgress(pct, `Processing: ${completedCount}/${totalPages} pages ready`, `${pct}%`);
       }
+    }
 
     // Process concurrently in batches
     for (let i = 0; i < totalPages; i += CONCURRENCY) {

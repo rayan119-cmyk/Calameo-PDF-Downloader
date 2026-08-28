@@ -1,48 +1,9 @@
 /**
- * api/book.js - Calaméo Metadata & Tokenized Vector Asset Extractor
- * Connects to Calaméo API, extracts wildcard page tokens and high-res vector assets.
+ * api/book.js - Robust Multi-Tier Calaméo Metadata & Page Asset Extractor
  */
 
-import https from 'https';
-
-function fetchCalameoBookApi(bkcode) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'd.calameo.com',
-      port: 443,
-      path: `/3.0.0/book.php?bkcode=${encodeURIComponent(bkcode)}`,
-      method: 'GET',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'Referer': 'https://www.calameo.com/',
-        'Accept': '*/*'
-      },
-      timeout: 12000
-    };
-
-    const req = https.request(options, (res) => {
-      let body = '';
-      res.on('data', (chunk) => body += chunk);
-      res.on('end', () => {
-        resolve({
-          statusCode: res.statusCode,
-          headers: res.headers,
-          body
-        });
-      });
-    });
-
-    req.on('error', reject);
-    req.on('timeout', () => {
-      req.destroy();
-      reject(new Error('Connection timeout to Calameo API'));
-    });
-    req.end();
-  });
-}
-
 export default async function handler(req, res) {
-  // CORS headers
+  // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -89,63 +50,136 @@ export default async function handler(req, res) {
       });
     }
 
-    // 2. Fetch book details and authorization headers from Calameo
-    const apiResult = await fetchCalameoBookApi(bkcode);
+    let title = '';
+    let totalPages = 0;
+    let coverUrl = '';
+    let assetBasePattern = '';
+    let tokenQuery = '';
 
-    if (apiResult.statusCode !== 200) {
-      return res.status(apiResult.statusCode).json({
-        success: false,
-        error: `Calameo returned HTTP ${apiResult.statusCode}. Document may be private or password-protected.`
-      });
+    // TIER 1 : Fetch the HTML reader page directly
+    const readerUrls = [
+      `https://www.calameo.com/read/${bkcode}`,
+      `https://en.calameo.com/read/${bkcode}`,
+      `https://www.calameo.com/books/${bkcode}`
+    ];
+
+    let htmlContent = '';
+    for (const rUrl of readerUrls) {
+      try {
+        const resp = await fetch(rUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+          }
+        });
+        if (resp.ok) {
+          htmlContent = await resp.text();
+          if (htmlContent.length > 500) break;
+        }
+      } catch (e) {
+        console.warn(`Reader URL fetch attempt failed for ${rUrl}:`, e.message);
+      }
     }
 
-    // Parse JSON callback body
-    let rawJson = apiResult.body.trim();
-    rawJson = rawJson.replace(/^callback\s*\(/i, '').replace(/\);?$/i, '');
-    const bookData = JSON.parse(rawJson);
+    if (htmlContent) {
+      // Parse Title
+      const ogTitle = htmlContent.match(/<meta property=["']og:title["'] content=["']([^"']+)["']/i);
+      const docTitle = htmlContent.match(/<title>([^<]+)<\/title>/i);
+      const descTitle = htmlContent.match(/Title:\s*([^,]+)/i);
+      title = (ogTitle ? ogTitle[1] : (descTitle ? descTitle[1] : (docTitle ? docTitle[1] : ''))).trim();
 
-    const content = bookData.content || {};
-    const key = content.key || bkcode;
-    const title = content.name || `Calameo_${bkcode}`;
-    const totalPages = (content.document && content.document.pages) ? content.document.pages : 20;
+      // Parse Total Pages
+      const lengthMatch = htmlContent.match(/Length:\s*([0-9]+)\s*pages/i);
+      const pagesMatch = htmlContent.match(/([0-9]+)\s*pages/i);
+      const jsonPages = htmlContent.match(/"pages"\s*:\s*([0-9]+)/i);
+      if (lengthMatch) totalPages = parseInt(lengthMatch[1], 10);
+      else if (pagesMatch) totalPages = parseInt(pagesMatch[1], 10);
+      else if (jsonPages) totalPages = parseInt(jsonPages[1], 10);
 
-    // 3. Extract wildcard signature token from Calaméo response headers
-    const exp = apiResult.headers['x-calameo-hash-expires'] || '';
-    const acl = apiResult.headers['x-calameo-hash-path'] || '';
-    const hmac = apiResult.headers['x-calameo-hash-signature'] || '';
+      // Parse Image asset pattern
+      const imageSrcMatch = htmlContent.match(/<link rel=["']image_src["'] href=["']([^"']+)["']/i) ||
+                            htmlContent.match(/<meta property=["']og:image["'] content=["']([^"']+)["']/i) ||
+                            htmlContent.match(/(https?:\/\/[^"'<>\s]*calameoassets\.com\/[^"'<>\s]+\/p1\.jpg[^"'<>\s]*)/i);
 
-    const tokenQuery = (exp && acl && hmac)
-      ? `?_token_=exp=${exp}~acl=${acl}~hmac=${hmac}`
-      : '';
+      if (imageSrcMatch && imageSrcMatch[1]) {
+        const fullImg = imageSrcMatch[1].replace(/&amp;/g, '&');
+        coverUrl = fullImg;
 
-    // 4. Build page asset URLs with token authorization
+        // Check if there's a token query (?_token_=...)
+        const tokenMatch = fullImg.match(/(\?_token_=[^"'\s]+)/i);
+        if (tokenMatch) tokenQuery = tokenMatch[1];
+
+        // Match base before /p1.jpg
+        const baseMatch = fullImg.match(/(https?:\/\/[^/]+\/[^?#]+\/)p[0-9]+\.jpg/i);
+        if (baseMatch && baseMatch[1]) {
+          assetBasePattern = baseMatch[1];
+        }
+      }
+    }
+
+    // TIER 2 : Fallback to Calaméo book API if pages or title not found
+    if (!totalPages || totalPages <= 0) {
+      try {
+        const bookApiResp = await fetch(`https://d.calameo.com/3.0.0/book.php?bkcode=${bkcode}`, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            'Accept': '*/*'
+          }
+        });
+        if (bookApiResp.ok) {
+          const xml = await bookApiResp.text();
+          const pMatch = xml.match(/<pages>([0-9]+)<\/pages>/i);
+          const tMatch = xml.match(/<title>([^<]+)<\/title>/i);
+          const accMatch = xml.match(/<AccountID>([^<]+)<\/AccountID>/i);
+          if (pMatch) totalPages = parseInt(pMatch[1], 10);
+          if (tMatch && !title) title = tMatch[1];
+          if (accMatch && !assetBasePattern) {
+            assetBasePattern = `https://p.calameoassets.com/${accMatch[1]}/${bkcode}/`;
+          }
+        }
+      } catch (e) {
+        console.warn('Calaméo book.php API fallback failed:', e.message);
+      }
+    }
+
+    // Default title if still empty
+    if (!title) title = `Calameo_${bkcode}`;
+    title = title.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&apos;/g, "'");
+
+    // If totalPages is still 0, provide default 20 pages
+    if (!totalPages || totalPages <= 0) {
+      totalPages = 20;
+    }
+
+    // Fallback base pattern if none detected
+    if (!assetBasePattern) {
+      assetBasePattern = `https://p.calameoassets.com/${bkcode}/`;
+    }
+
+    // Build page URL list
     const pages = [];
     const proxyBase = '/api/proxy?url=';
 
     for (let i = 1; i <= totalPages; i++) {
-      // Primary: High-fidelity Vector SVGZ
-      const svgzUrl = `https://ps.calameoassets.com/${key}/p${i}.svgz${tokenQuery}`;
-      // Fallback: High-resolution JPG
-      const jpgUrl = `https://ps.calameoassets.com/${key}/p${i}.jpg${tokenQuery}`;
-      const fallbackUrl = `https://i.calameoassets.com/${key}/p${i}.jpg`;
-
+      let pageDirectUrl = `${assetBasePattern}p${i}.jpg${tokenQuery}`;
       pages.push({
         pageNumber: i,
-        cdnUrl: svgzUrl,
-        proxyUrl: `${proxyBase}${encodeURIComponent(svgzUrl)}`,
-        fallbackJpgUrl: jpgUrl,
-        fallbackThumbUrl: fallbackUrl
+        cdnUrl: pageDirectUrl,
+        proxyUrl: `${proxyBase}${encodeURIComponent(pageDirectUrl)}`,
+        fallbackJpgUrl: pageDirectUrl
       });
     }
 
-    // Cover thumbnail
-    const coverCdnUrl = `https://i.calameoassets.com/${key}/p1.jpg`;
-    const coverUrl = `${proxyBase}${encodeURIComponent(coverCdnUrl)}`;
+    if (!coverUrl) {
+      coverUrl = pages[0].proxyUrl;
+    } else if (!coverUrl.startsWith('/api/proxy')) {
+      coverUrl = `${proxyBase}${encodeURIComponent(coverUrl)}`;
+    }
 
     return res.status(200).json({
       success: true,
       bkcode,
-      title: title.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+      title,
       totalPages,
       coverUrl,
       viewUrl: `https://www.calameo.com/read/${bkcode}`,

@@ -29,11 +29,11 @@
     <!-- Main Card -->
     <main class="glass-card main-box">
       <!-- Input Section -->
-      <form id="urlForm" class="url-form" onsubmit="event.preventDefault(); return false;">
+      <form id="urlForm" class="url-form">
         <label for="urlInput" class="input-label">Calaméo Publication URL</label>
         <div class="input-group">
           <input 
-            type="text" 
+            type="url" 
             id="urlInput" 
             placeholder="https://www.calameo.com/read/007907577e17cb97dca09" 
             required
@@ -42,7 +42,7 @@
           <button type="button" id="pasteBtn" class="btn-secondary" title="Paste from clipboard">
             📋 Paste
           </button>
-          <button type="button" id="inspectBtn" class="btn-primary">
+          <button type="submit" id="inspectBtn" class="btn-primary">
             <span>Inspect</span>
             <span class="spinner" id="inspectSpinner" style="display:none;"></span>
           </button>
@@ -71,24 +71,12 @@
           <label class="group-label">Export Mode & Smart Compression</label>
           <div class="compression-grid">
             <label class="mode-card active">
-              <input type="radio" name="compressionMode" value="standard" checked>
-              <div class="mode-content">
-                <div class="mode-header">
-                  <span class="mode-icon">⭐</span>
-                  <span class="mode-title">Standard HD Original</span>
-                  <span class="mode-tag recommend">Recommended</span>
-                </div>
-                <p class="mode-desc">Raw original resolution. Maximum visual sharpness and full document fidelity.</p>
-                <div class="mode-size">Estimated size: ~14-16 MB / 20p</div>
-              </div>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="compressionMode" value="journal">
+              <input type="radio" name="compressionMode" value="journal" checked>
               <div class="mode-content">
                 <div class="mode-header">
                   <span class="mode-icon">📰</span>
                   <span class="mode-title">Newspaper / Balanced Mode</span>
+                  <span class="mode-tag recommend">Recommended</span>
                 </div>
                 <p class="mode-desc">Clamps background to pure white (#FFFFFF) and boosts ink contrast. Ideal for press & text.</p>
                 <div class="mode-size">Estimated size: ~7-8 MB / 20p</div>
@@ -105,6 +93,18 @@
                 </div>
                 <p class="mode-desc">Maximum compression for quick WhatsApp, Email sharing, and minimal storage.</p>
                 <div class="mode-size">Estimated size: ~4-5 MB / 20p</div>
+              </div>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="compressionMode" value="standard">
+              <div class="mode-content">
+                <div class="mode-header">
+                  <span class="mode-icon">⭐</span>
+                  <span class="mode-title">Standard HD Original</span>
+                </div>
+                <p class="mode-desc">Raw uncompressed resolution. Maximum image fidelity.</p>
+                <div class="mode-size">Estimated size: ~14-16 MB / 20p</div>
               </div>
             </label>
           </div>
