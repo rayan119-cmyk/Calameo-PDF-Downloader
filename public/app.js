@@ -57,11 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Inspect Calaméo URL form submit
-  urlForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  // 3. Inspect Calaméo URL handler
+  async function handleInspect(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     const url = urlInput.value.trim();
-    if (!url) return;
+    if (!url) {
+      showError('Please paste or type a valid Calaméo publication URL.');
+      return;
+    }
 
     showError('');
     setInspectLoading(true);
@@ -84,6 +90,15 @@ document.addEventListener('DOMContentLoaded', () => {
       showError(err.message || 'Unable to inspect publication. Please check the URL.');
     } finally {
       setInspectLoading(false);
+    }
+  }
+
+  inspectBtn.addEventListener('click', handleInspect);
+  urlForm.addEventListener('submit', handleInspect);
+  urlInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleInspect();
     }
   });
 

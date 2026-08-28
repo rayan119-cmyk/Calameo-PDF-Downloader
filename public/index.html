@@ -29,11 +29,11 @@
     <!-- Main Card -->
     <main class="glass-card main-box">
       <!-- Input Section -->
-      <form id="urlForm" class="url-form">
+      <form id="urlForm" class="url-form" onsubmit="event.preventDefault(); return false;">
         <label for="urlInput" class="input-label">Calaméo Publication URL</label>
         <div class="input-group">
           <input 
-            type="url" 
+            type="text" 
             id="urlInput" 
             placeholder="https://www.calameo.com/read/007907577e17cb97dca09" 
             required
@@ -42,7 +42,7 @@
           <button type="button" id="pasteBtn" class="btn-secondary" title="Paste from clipboard">
             📋 Paste
           </button>
-          <button type="submit" id="inspectBtn" class="btn-primary">
+          <button type="button" id="inspectBtn" class="btn-primary">
             <span>Inspect</span>
             <span class="spinner" id="inspectSpinner" style="display:none;"></span>
           </button>
