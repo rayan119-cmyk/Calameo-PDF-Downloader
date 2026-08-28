@@ -37,9 +37,9 @@ export default async function handler(req, res) {
       }
     });
 
-    // Fallback: If .svgz fails with 404, try .jpg equivalent
-    if (!response.ok && targetUrl.endsWith('.svgz')) {
-      const fallbackUrl = targetUrl.replace(/\.svgz$/i, '.jpg');
+    // Fallback: If .svgz fails with 404 or 403, try .jpg equivalent
+    if (!response.ok && /\.svgz(\?.*)?$/i.test(targetUrl)) {
+      const fallbackUrl = targetUrl.replace(/\.svgz(\?.*)?$/i, '.jpg$1');
       response = await fetch(fallbackUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   generatePdfBtn.addEventListener('click', async () => {
     if (!currentBookData || !currentBookData.pages || isProcessing) return;
 
-    const mode = document.querySelector('input[name="compressionMode"]:checked')?.value || 'journal';
+    const mode = document.querySelector('input[name="compressionMode"]:checked')?.value || 'standard';
     const layout = pdfLayoutSelect.value || 'fill';
     const orientation = pdfOrientationSelect.value || 'portrait';
 
@@ -331,14 +331,19 @@ document.addEventListener('DOMContentLoaded', () => {
           const result = await processPageImage(fallbackProxy, mode);
           pagesResults[index] = result;
         } catch (e2) {
-          console.error(`Page ${index + 1} failed:`, e2);
+          try {
+            const thumbProxy = `/api/proxy?url=${encodeURIComponent(pageObj.fallbackThumbUrl)}`;
+            const result = await processPageImage(thumbProxy, mode);
+            pagesResults[index] = result;
+          } catch (e3) {
+            console.error(`Page ${index + 1} all fallbacks failed:`, e3);
+          }
         }
       } finally {
         completedCount++;
         const pct = Math.round((completedCount / totalPages) * 85);
         updateProgress(pct, `Processing: ${completedCount}/${totalPages} pages ready`, `${pct}%`);
       }
-    }
 
     // Process concurrently in batches
     for (let i = 0; i < totalPages; i += CONCURRENCY) {

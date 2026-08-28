@@ -71,12 +71,24 @@
           <label class="group-label">Export Mode & Smart Compression</label>
           <div class="compression-grid">
             <label class="mode-card active">
-              <input type="radio" name="compressionMode" value="journal" checked>
+              <input type="radio" name="compressionMode" value="standard" checked>
+              <div class="mode-content">
+                <div class="mode-header">
+                  <span class="mode-icon">⭐</span>
+                  <span class="mode-title">Standard HD Original</span>
+                  <span class="mode-tag recommend">Recommended</span>
+                </div>
+                <p class="mode-desc">Raw original resolution. Maximum visual sharpness and full document fidelity.</p>
+                <div class="mode-size">Estimated size: ~14-16 MB / 20p</div>
+              </div>
+            </label>
+
+            <label class="mode-card">
+              <input type="radio" name="compressionMode" value="journal">
               <div class="mode-content">
                 <div class="mode-header">
                   <span class="mode-icon">📰</span>
                   <span class="mode-title">Newspaper / Balanced Mode</span>
-                  <span class="mode-tag recommend">Recommended</span>
                 </div>
                 <p class="mode-desc">Clamps background to pure white (#FFFFFF) and boosts ink contrast. Ideal for press & text.</p>
                 <div class="mode-size">Estimated size: ~7-8 MB / 20p</div>
@@ -93,18 +105,6 @@
                 </div>
                 <p class="mode-desc">Maximum compression for quick WhatsApp, Email sharing, and minimal storage.</p>
                 <div class="mode-size">Estimated size: ~4-5 MB / 20p</div>
-              </div>
-            </label>
-
-            <label class="mode-card">
-              <input type="radio" name="compressionMode" value="standard">
-              <div class="mode-content">
-                <div class="mode-header">
-                  <span class="mode-icon">⭐</span>
-                  <span class="mode-title">Standard HD Original</span>
-                </div>
-                <p class="mode-desc">Raw uncompressed resolution. Maximum image fidelity.</p>
-                <div class="mode-size">Estimated size: ~14-16 MB / 20p</div>
               </div>
             </label>
           </div>
